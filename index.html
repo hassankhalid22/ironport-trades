@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ironport Trades — Every order, on a route you can see</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='22' cy='50' r='16' fill='%232C5FCC'/><circle cx='50' cy='50' r='16' fill='%23C98A1E'/><circle cx='78' cy='50' r='16' fill='%23D6472F'/></svg>">
+<meta name="description" content="Shop kitchen, tech, home, and outdoor products from Ironport Trades, shipped through Amazon's fulfilment network with tracking on every order.">
+<meta property="og:title" content="Ironport Trades — Every order, on a route you can see">
+<meta property="og:description" content="Shop kitchen, tech, home, and outdoor products from Ironport Trades, shipped through Amazon's fulfilment network with tracking on every order.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16202B;
+  --ink-soft:#5B6773;
+  --bg:#FFFFFF;
+  --bg-alt:#F3F5F8;
+  --line:#E3E7EC;
+  --blue:#2C5FCC;
+  --amber:#C98A1E;
+  --coral:#D6472F;
+  --teal:#17936B;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Inter',sans-serif;font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Sora',sans-serif;font-weight:700;line-height:1.15;margin:0;}
+a{color:inherit;}
+.mono{font-family:'IBM Plex Mono',monospace;font-weight:500;}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+
+header{border-bottom:1px solid var(--line);}
+.header-row{display:flex;align-items:center;justify-content:space-between;padding:20px 0;flex-wrap:wrap;gap:16px;}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;}
+.wordmark .dots{display:flex;gap:3px;}
+.wordmark .dots span{width:7px;height:7px;border-radius:50%;display:block;}
+nav{display:flex;gap:26px;align-items:center;flex-wrap:wrap;}
+nav a{text-decoration:none;font-size:0.95rem;color:var(--ink-soft);}
+nav a:hover, nav a.current{color:var(--ink);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:0.95rem;font-weight:600;text-decoration:none;border-radius:7px;border:1.5px solid transparent;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#234da3;}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--ink);}
+
+.hero{padding:64px 0 40px;}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+.hero h1{font-size:clamp(2.1rem,4vw,3rem);max-width:14ch;margin-bottom:18px;}
+.hero p.lead{font-size:1.08rem;color:var(--ink-soft);max-width:44ch;margin:0 0 30px;}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+
+.map-svg{width:100%;height:auto;}
+.route-path{fill:none;stroke-width:4;stroke-linecap:round;stroke-dasharray:520;stroke-dashoffset:520;transition:stroke-dashoffset 1.3s ease;}
+.route-path.animate-in{stroke-dashoffset:0;}
+.route-path.p1{transition-delay:0s;}
+.route-path.p2{transition-delay:0.18s;}
+.route-path.p3{transition-delay:0.36s;}
+@media (prefers-reduced-motion:reduce){
+  .route-path{transition:none;stroke-dashoffset:0;}
+}
+.stop{fill:var(--bg);stroke-width:3;}
+.hub-ring{fill:none;stroke:var(--ink);stroke-width:2;}
+.hub-fill{fill:var(--ink);}
+
+.legend{padding:36px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.legend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;}
+.legend-item{display:flex;gap:14px;align-items:flex-start;}
+.legend-swatch{width:12px;height:12px;border-radius:50%;margin-top:6px;flex-shrink:0;}
+.legend-item h3{font-size:1.02rem;margin-bottom:4px;}
+.legend-item p{font-size:0.92rem;color:var(--ink-soft);margin:0;}
+
+.stats{padding:52px 0;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+.stat{padding:0 24px;border-left:1px solid var(--line);}
+.stat:first-child{border-left:none;padding-left:0;}
+.stat .num{font-family:'Sora',sans-serif;font-weight:700;font-size:2.1rem;}
+.stat .cap{font-size:0.92rem;color:var(--ink-soft);margin-top:4px;}
+
+.products{padding:20px 0 84px;}
+.products-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:26px;flex-wrap:wrap;gap:14px;}
+.products-head h2{font-size:1.6rem;}
+.products-head-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.products-head .note{font-size:0.9rem;color:var(--ink-soft);}
+.manage-btn{padding:9px 16px;font-size:0.85rem;border-radius:6px;}
+
+.admin-panel{display:none;border:1.5px dashed var(--line);background:var(--bg-alt);border-radius:10px;padding:22px;margin-bottom:26px;}
+.admin-panel.open{display:block;}
+.admin-panel h3{font-size:1rem;margin-bottom:16px;}
+.admin-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.admin-form .full{grid-column:1/-1;}
+.admin-form label{display:block;font-size:0.82rem;color:var(--ink-soft);margin-bottom:6px;}
+.admin-form input,.admin-form select,.admin-form textarea{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:0.92rem;background:#fff;color:var(--ink);
+}
+.admin-form textarea{resize:vertical;min-height:64px;}
+.admin-form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;}
+.admin-hint{font-size:0.8rem;color:var(--ink-soft);margin:0 0 16px;}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+.product-card{position:relative;border:1px solid var(--line);border-radius:10px;padding:22px;background:var(--bg);}
+.tag{display:inline-block;font-size:0.75rem;font-weight:600;padding:4px 10px;border-radius:100px;color:#fff;margin-bottom:14px;}
+.tag-kitchen{background:var(--coral);}
+.tag-tech{background:var(--blue);}
+.tag-home{background:var(--amber);}
+.tag-outdoor{background:var(--teal);}
+.product-name{font-weight:600;font-size:1.02rem;margin-bottom:4px;}
+.product-sku{font-size:0.78rem;color:var(--ink-soft);margin-bottom:10px;}
+.product-desc{font-size:0.86rem;color:var(--ink-soft);margin:0 0 14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.variant-group{margin-bottom:12px;}
+.variant-label{display:block;font-size:0.76rem;color:var(--ink-soft);margin-bottom:6px;}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;}
+.swatch[aria-pressed="true"]{border-color:var(--ink);}
+.size-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.size-pill{padding:8px 14px;font-size:0.78rem;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;color:var(--ink);min-height:36px;}
+.size-pill[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff;}
+.variant-selected{font-size:0.78rem;color:var(--ink-soft);margin-bottom:12px;}
+.product-foot{display:flex;justify-content:space-between;align-items:center;}
+.product-price{font-weight:700;font-size:1.05rem;}
+.product-add{padding:11px 16px;font-size:0.85rem;border-radius:6px;min-height:40px;}
+.delete-btn{
+  display:none;position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--ink-soft);align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.95rem;line-height:1;padding:0;
+}
+.product-grid.admin-mode .delete-btn{display:flex;}
+.delete-btn:hover{border-color:var(--coral);color:var(--coral);}
+
+footer{border-top:1px solid var(--line);padding:36px 0;}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;}
+.footer-links a{font-size:0.9rem;color:var(--ink-soft);text-decoration:none;}
+.footer-links a:hover{color:var(--ink);}
+.footer-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-row .fine{font-size:0.85rem;color:var(--ink-soft);max-width:52ch;}
+
+/* ---- Content pages: About / Contact / Shipping & Returns / Privacy & Terms ---- */
+.page-hero{padding:52px 0 36px;border-bottom:1px solid var(--line);}
+.page-hero h1{font-size:clamp(1.9rem,3.6vw,2.5rem);max-width:22ch;}
+.page-hero p{color:var(--ink-soft);font-size:1.05rem;max-width:60ch;margin:14px 0 0;}
+
+.content{padding:48px 0 84px;}
+.content .wrap{max-width:760px;}
+.prose h2{font-size:1.25rem;margin:38px 0 12px;}
+.prose h2:first-of-type{margin-top:0;}
+.prose p{color:var(--ink-soft);margin:0 0 14px;}
+.prose ul{color:var(--ink-soft);padding-left:20px;margin:0 0 16px;}
+.prose li{margin-bottom:6px;}
+
+.notice{background:var(--bg-alt);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-size:0.9rem;color:var(--ink-soft);margin-bottom:32px;}
+
+.placeholder{background:#FDF3DC;border:1px dashed var(--amber);color:#7A5410;padding:1px 6px;border-radius:4px;font-size:0.94em;}
+
+.contact-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;}
+.info-list{list-style:none;padding:0;margin:0 0 8px;}
+.info-list li{display:flex;gap:6px;margin-bottom:16px;font-size:0.95rem;color:var(--ink-soft);flex-wrap:wrap;}
+.info-list strong{color:var(--ink);min-width:78px;display:inline-block;}
+.contact-form{display:grid;gap:16px;}
+.contact-form label{display:block;font-size:0.85rem;color:var(--ink-soft);margin-bottom:6px;}
+.contact-form input,.contact-form textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:0.95rem;color:var(--ink);background:#fff;
+}
+.contact-form textarea{min-height:120px;resize:vertical;}
+.form-note{font-size:0.8rem;color:var(--ink-soft);margin-top:-2px;}
+
+.speed-table{border-top:1px solid var(--line);margin:18px 0 30px;}
+.speed-row{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+.speed-row .name{font-weight:600;}
+.speed-row .time{color:var(--ink-soft);font-size:0.92rem;}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;}
+  .legend-grid{grid-template-columns:1fr;gap:20px;}
+  .stats-grid{grid-template-columns:1fr;gap:24px;}
+  .stat{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:20px;}
+  .stat:first-child{border-top:none;padding-top:0;}
+  nav{gap:16px;}
+  .contact-grid{grid-template-columns:1fr;gap:36px;}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-row">
+    <a class="wordmark" href="#top">
+      <span class="dots"><span style="background:var(--blue)"></span><span style="background:var(--amber)"></span><span style="background:var(--coral)"></span></span>
+      Ironport Trades
+    </a>
+    <nav>
+      <a href="#products" class="current">Shop</a>
+      <a href="shipping-returns.html">Shipping &amp; Returns</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a class="btn btn-primary" href="#" role="button">Create an account</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Every order, on a route you can see.</h1>
+        <p class="lead">Ironport Trades ships through Amazon's fulfilment network on three clear speeds. Pick one at checkout, then watch your order move along it in real time.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#products">Browse products</a>
+          <a class="btn btn-ghost" href="#" role="button">Create an account</a>
+        </div>
+      </div>
+
+      <div>
+        <svg class="map-svg" viewBox="0 0 480 320" id="mapSvg" aria-hidden="true">
+          <path class="route-path p1" d="M20,60 C160,60 220,90 300,140 C360,180 380,180 420,178" stroke="#2C5FCC"/>
+          <path class="route-path p2" d="M20,160 C140,160 220,158 300,160 C360,162 380,172 420,178" stroke="#C98A1E"/>
+          <path class="route-path p3" d="M20,260 C160,260 220,220 300,190 C360,182 380,180 420,178" stroke="#D6472F"/>
+
+          <circle class="stop" cx="160" cy="63" r="5" stroke="#2C5FCC"/>
+          <circle class="stop" cx="150" cy="160" r="5" stroke="#C98A1E"/>
+          <circle class="stop" cx="160" cy="248" r="5" stroke="#D6472F"/>
+          <circle class="stop" cx="300" cy="150" r="5" stroke="#2C5FCC"/>
+
+          <circle class="hub-ring" cx="420" cy="178" r="16"/>
+          <circle class="hub-fill" cx="420" cy="178" r="4"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="legend" id="routes">
+    <div class="wrap legend-grid">
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:var(--blue)"></span>
+        <div>
+          <h3>Standard</h3>
+          <p>Arrives in 3–5 business days, tracked door to door.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:var(--amber)"></span>
+        <div>
+          <h3>Express</h3>
+          <p>Arrives in 1–2 business days from dispatch.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <span class="legend-swatch" style="background:var(--coral)"></span>
+        <div>
+          <h3>Priority</h3>
+          <p>Arrives next day in most serviceable regions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="products" id="products">
+    <div class="wrap">
+      <div class="products-head">
+        <h2>Products</h2>
+        <div class="products-head-right">
+          <span class="note">Prices in CAD</span>
+          <button type="button" class="btn btn-ghost manage-btn" id="manageToggle">Manage products</button>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="adminPanel">
+        <h3>Add a product</h3>
+        <p class="admin-hint">This runs in your browser only — new products and deletions last until you refresh the page.</p>
+        <form class="admin-form" id="addProductForm">
+          <div>
+            <label for="fName">Name</label>
+            <input id="fName" required>
+          </div>
+          <div>
+            <label for="fCategory">Category</label>
+            <select id="fCategory">
+              <option value="kitchen">Kitchen</option>
+              <option value="tech">Tech</option>
+              <option value="home">Home</option>
+              <option value="outdoor">Outdoor</option>
+            </select>
+          </div>
+          <div>
+            <label for="fPrice">Price (CAD)</label>
+            <input id="fPrice" type="number" step="0.01" min="0" required>
+          </div>
+          <div>
+            <label for="fColors">Colors (comma-separated, optional)</label>
+            <input id="fColors" placeholder="e.g. Black, White, Coral">
+          </div>
+          <div class="full">
+            <label for="fSizes">Sizes (comma-separated, optional)</label>
+            <input id="fSizes" placeholder="e.g. S, M, L, XL">
+          </div>
+          <div class="full">
+            <label for="fDesc">Description</label>
+            <textarea id="fDesc" placeholder="What it is, what it's made of, anything a shopper should know"></textarea>
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary">Add product</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="shipping-returns.html">Shipping &amp; Returns</a>
+      <a href="privacy-terms.html">Privacy &amp; Terms</a>
+    </div>
+    <div class="footer-row">
+      <span class="wordmark" style="font-size:1rem;">
+        <span class="dots"><span style="background:var(--blue)"></span><span style="background:var(--amber)"></span><span style="background:var(--coral)"></span></span>
+        Ironport Trades
+      </span>
+      <span class="fine">Orders are packed and shipped through Amazon's Multi-Channel Fulfilment network. Prices shown in CAD.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('load', function () {
+    requestAnimationFrame(function () {
+      document.querySelectorAll('.route-path').forEach(function(p){ p.classList.add('animate-in'); });
+    });
+  });
+
+  // ---- Product data (in-memory only; resets on refresh) ----
+  var products = [
+    {id:1, name:"Pour-Over Coffee Dripper", sku:"IPT-2201", category:"kitchen",
+     price:34.00, desc:"Ceramic single-cup dripper with a slow-flow spiral rib for even extraction.",
+     colors:["Charcoal","White"], sizes:[]},
+    {id:2, name:"Bamboo Cutting Board Set", sku:"IPT-2214", category:"kitchen",
+     price:28.50, desc:"Three end-grain bamboo boards in graduated sizes, finished with food-safe oil.",
+     colors:[], sizes:[]},
+    {id:3, name:"Insulated Steel Bottle, 750ml", sku:"IPT-3105", category:"outdoor",
+     price:24.00, desc:"Double-wall stainless steel that keeps drinks cold for 24 hours or hot for 12.",
+     colors:["Coral","Blue","Black"], sizes:["500ml","750ml","1L"]},
+    {id:4, name:"Aluminum Phone Stand", sku:"IPT-4402", category:"tech",
+     price:16.00, desc:"Folds flat for travel and adjusts to five viewing angles.",
+     colors:["Silver","Black"], sizes:[]},
+    {id:5, name:"Cable Organizer Tray", sku:"IPT-1187", category:"home",
+     price:19.50, desc:"Under-desk mounted tray that keeps power strips and cables out of sight.",
+     colors:[], sizes:[]},
+    {id:6, name:"Cast Iron Skillet, 10\"", sku:"IPT-2233", category:"kitchen",
+     price:42.00, desc:"Pre-seasoned and ready to use, built to last for decades with care.",
+     colors:[], sizes:["8\"","10\"","12\""]}
+  ];
+  var nextId = 7;
+  var skuCounter = 5000;
+  var variantSelections = {}; // { [productId]: { color, size } }
+
+  var colorMap = {
+    black:'#16202B', white:'#FFFFFF', charcoal:'#3A3F44', silver:'#C7CBD1',
+    grey:'#8A8F97', gray:'#8A8F97', blue:'#2C5FCC', coral:'#D6472F', red:'#D6472F',
+    amber:'#C98A1E', yellow:'#C98A1E', teal:'#17936B', green:'#17936B', navy:'#1B3A6B'
+  };
+  function colorToHex(name){ return colorMap[name.trim().toLowerCase()] || '#B9C0C8'; }
+
+  var tagLabel = {kitchen:'Kitchen', tech:'Tech', home:'Home', outdoor:'Outdoor'};
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  function productCardHtml(p){
+    var sel = variantSelections[p.id] || {};
+    var variantsHtml = '';
+
+    if (p.colors.length){
+      variantsHtml += '<div class="variant-group"><span class="variant-label">Color</span><div class="swatches">' +
+        p.colors.map(function(c){
+          var pressed = sel.color === c;
+          return '<button type="button" class="swatch" style="background:' + colorToHex(c) + '" ' +
+            'data-pid="' + p.id + '" data-type="color" data-value="' + escapeHtml(c) + '" ' +
+            'aria-pressed="' + pressed + '" title="' + escapeHtml(c) + '" aria-label="Color: ' + escapeHtml(c) + '"></button>';
+        }).join('') + '</div></div>';
+    }
+    if (p.sizes.length){
+      variantsHtml += '<div class="variant-group"><span class="variant-label">Size</span><div class="size-pills">' +
+        p.sizes.map(function(s){
+          var pressed = sel.size === s;
+          return '<button type="button" class="size-pill" data-pid="' + p.id + '" data-type="size" data-value="' + escapeHtml(s) + '" ' +
+            'aria-pressed="' + pressed + '">' + escapeHtml(s) + '</button>';
+        }).join('') + '</div></div>';
+    }
+    if (p.colors.length || p.sizes.length){
+      var parts = [];
+      if (p.colors.length) parts.push(sel.color || 'choose a color');
+      if (p.sizes.length) parts.push(sel.size || 'choose a size');
+      variantsHtml += '<div class="variant-selected">Selected: ' + parts.join(', ') + '</div>';
+    }
+
+    return '' +
+      '<div class="product-card">' +
+        '<button type="button" class="delete-btn" data-pid="' + p.id + '" aria-label="Delete ' + escapeHtml(p.name) + '">&times;</button>' +
+        '<span class="tag tag-' + p.category + '">' + tagLabel[p.category] + '</span>' +
+        '<div class="product-name">' + escapeHtml(p.name) + '</div>' +
+        '<div class="product-sku mono">' + p.sku + '</div>' +
+        (p.desc ? '<div class="product-desc">' + escapeHtml(p.desc) + '</div>' : '') +
+        variantsHtml +
+        '<div class="product-foot">' +
+          '<span class="product-price">$' + p.price.toFixed(2) + '</span>' +
+          '<button type="button" class="btn btn-ghost product-add">Add</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderProducts(){
+    var grid = document.getElementById('productGrid');
+    grid.innerHTML = products.map(productCardHtml).join('');
+  }
+
+  document.getElementById('productGrid').addEventListener('click', function(e){
+    var del = e.target.closest('.delete-btn');
+    if (del){
+      products = products.filter(function(p){ return String(p.id) !== del.dataset.pid; });
+      delete variantSelections[del.dataset.pid];
+      renderProducts();
+      return;
+    }
+    var variantBtn = e.target.closest('.swatch, .size-pill');
+    if (variantBtn){
+      var pid = variantBtn.dataset.pid;
+      if (!variantSelections[pid]) variantSelections[pid] = {};
+      variantSelections[pid][variantBtn.dataset.type] = variantBtn.dataset.value;
+      renderProducts();
+      return;
+    }
+  });
+
+  var manageToggle = document.getElementById('manageToggle');
+  var adminPanel = document.getElementById('adminPanel');
+  var productGrid = document.getElementById('productGrid');
+  manageToggle.addEventListener('click', function(){
+    var open = adminPanel.classList.toggle('open');
+    productGrid.classList.toggle('admin-mode', open);
+    manageToggle.textContent = open ? 'Done managing' : 'Manage products';
+  });
+
+  document.getElementById('addProductForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('fName').value.trim();
+    if (!name) return;
+    var category = document.getElementById('fCategory').value;
+    var price = parseFloat(document.getElementById('fPrice').value) || 0;
+    var colors = document.getElementById('fColors').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    var sizes = document.getElementById('fSizes').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    var desc = document.getElementById('fDesc').value.trim();
+
+    products.push({
+      id: nextId++, name: name, sku: 'IPT-' + (skuCounter++), category: category,
+      price: price, desc: desc, colors: colors, sizes: sizes
+    });
+    renderProducts();
+    this.reset();
+  });
+
+  renderProducts();
+</script>
+
+</body>
+</html>
